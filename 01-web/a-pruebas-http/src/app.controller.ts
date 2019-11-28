@@ -1,10 +1,18 @@
-import {Controller, Get, HttpCode, InternalServerErrorException, Post} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get, Headers,
+    HttpCode,
+    InternalServerErrorException,
+    Param,
+    Post,
+    Query,
+} from '@nestjs/common';
 import {AppService} from './app.service';
-
-@Controller('pepito') // Decorador: seggmento url -> "/pepito"
+import {get} from 'http';
+@Controller()
 export class AppController {
-    constructor(private readonly appService: AppService) {
-    }
+  constructor(private readonly appService: AppService) {}
 
     // http://localhost:3000/pepito/hola-mundo
     @Get('hola-mundo')// -> url "/"
@@ -27,8 +35,70 @@ export class AppController {
     private obtenerSegundos(): number {
         return new Date().getSeconds();
     }
+    @Get('bienvenida')
+    public bienvenida(
+        @Query() parametrosDeConsulta: ObjetoBienvenida,
+        @Query('nombre') nombreUsuario: string,
+        @Query('numero') numeroUsuario: number,
+        @Query('casado') casadoUsuario: boolean,
+    ): string {
+        // tslint:disable-next-line:no-console
+        console.log(parametrosDeConsulta);
+        // tslint:disable-next-line:no-console
+        console.log(typeof nombreUsuario);
+        // tslint:disable-next-line:no-console
+        console.log(typeof numeroUsuario);
+        // tslint:disable-next-line:no-console
+        console.log(typeof casadoUsuario);
+        // template strings \\ 'Mensaje ${variable}'
+        return 'Mensaje ${parametrosDeConsulta.nombre} Numero: ${parametrosDeConsulta.numero}';
+    }
+
+    @Get('inscripcion-curso/:idCurso/:cedula') // /:nombreParametro
+    public inscripcionCurso(
+        @Param() parametrosDeRuta: ObjetoInscripcion,
+        @Param('idCurso') idCurso: string,
+        // tslint:disable-next-line:no-shadowed-variable
+        @Param('cedula') cedula: string,
+    ): string {
+        // tslint:disable-next-line:no-console
+        console.log(parametrosDeRuta);
+        // template strings \\ 'Mensaje ${variable}'
+        return 'Te inscribiste al curso: ${parametrosDeRuta.idCurso}' +
+            '${parametrosDeRuta.cedula}';
+    }
+    @Post('almorzar')
+    @HttpCode(200)
+    public almorzar(
+        @Body() parametrosDeCuerpo,
+        @Body('id') id: number,
+    ): string {
+        // tslint:disable-next-line:no-console
+        console.log(parametrosDeCuerpo);
+        // template strings \\ 'Mensaje ${variable}'
+        return 'El id es: ${id}';
+    }
+    @Get('obtener-cabeceras')
+    obtenerCabeceras(
+        @Headers() cabeceras,
+        @Headers('numerouno') numeroUno: string,
+    ) {
+        // tslint:disable-next-line:no-console
+        console.log(cabeceras);
+        return 'Las cabeceras son ${numeroUno}';
+    }
+
 }
 
+interface ObjetoBienvenida {
+    idCurso?: string;
+    cedula: string;
+}
+interface ObjetoInscripcion {
+    nombre?: string;
+    numero?: string;
+    casado?: string;
+}
 // Typescript
 // Declaracion de variables
 // No utilizar
@@ -48,120 +118,45 @@ let ojos; // undefined
 // TRUTY - FALSY
 // con tres iguales compara hasta el tipo de dato
 if (true) {
-    // tslint:disable-next-line:no-console
-    console.log('Truty');
+  // tslint:disable-next-line:no-console
+  console.log('Truty');
 } else {
-    // tslint:disable-next-line:no-console
-    console.log('Falsy');
+  // tslint:disable-next-line:no-console
+  console.log('Falsy');
 }
 if (0) {
-    // tslint:disable-next-line:no-console
-    console.log('Falsy');
+  // tslint:disable-next-line:no-console
+  console.log('Falsy');
 }
 if (-1) {
-    // tslint:disable-next-line:no-console
-    console.log('Truty');
+  // tslint:disable-next-line:no-console
+  console.log('Truty');
 }
 if (-1) {
-    // tslint:disable-next-line:no-console
-    console.log('Truty');
+  // tslint:disable-next-line:no-console
+  console.log('Truty');
 }
 
 if ('') {
-    // tslint:disable-next-line:no-console
-    console.log('Truty');
+  // tslint:disable-next-line:no-console
+  console.log('Truty');
 }
 
 if ('abc') {
-    // tslint:disable-next-line:no-console
-    console.log('Truty');
+  // tslint:disable-next-line:no-console
+  console.log('Truty');
 }
 
 // tslint:disable-next-line:max-classes-per-file
 class Usuario {
-    public cedula: string = '1723926612';
-    cedula2 = '0501651418';
-    // tslint:disable-next-line:no-shadowed-variable
-    // constructor(cedula: string){
-    // this.cedula = cedula;
-    // }
-    // tslint:disable-next-line:no-shadowed-variable
-    constructor(public nombre: string, public apellido: string) { // Crear una propiedad
-        // LLamada nombre y recibir paramatreo y asignarlo a la propiedad nombre
-
-    }
-
-    private holaMundo(): void {
-        // tslint:disable-next-line:no-console
-        console.log('Hola');
-    }
-
-    holaMundo2() {
-        // tslint:disable-next-line:no-console
-        console.log('Hola');
-    }
+  public cedula: string = '1723926612';
+  cedula2 = '0501651418';
+  private holaMundo(): void {
+    // tslint:disable-next-line:no-console
+    console.log('Hola');
+  }
+  holaMundo2() {
+    // tslint:disable-next-line:no-console
+    console.log('Hola');
+  }
 }
-
-// tslint:disable-next-line:max-classes-per-file
-class Usuario2 {
-    constructor(
-        public nombre: string, // parametro opcional
-        // tslint:disable-next-line:no-shadowed-variable
-        public apellido?: string, // parametro requerido
-    ) {
-    }
-}
-
-const daniel = new Usuario2('Daniel');
-const alejandro = new Usuario2('Alejandro', 'Gallardo');
-
-// tslint:disable-next-line:max-classes-per-file
-class Empleado extends Usuario2 {
-    constructor(nombre: string,
-                public numeroContrato: string,
-                // tslint:disable-next-line:no-shadowed-variable
-                apellido?: string) {
-        super(nombre, apellido);
-    }
-}
-
-const empleadoDaniel = new Empleado('Daniel', '1234');
-
-interface Pelota {
-    diametro: number;
-    color?: string;
-}
-
-const balonFutbol: Pelota = {
-    diametro: 1,
-    color: 'amazul',
-};
-
-// tslint:disable-next-line:max-classes-per-file
-class Juego implements Pelota {
-    diametro: number;
-}
-
-interface Entrenador {
-    id: number;
-    nombre: string;
-}
-
-interface Pokemon {
-    id: number;
-    nombre: string;
-    entrenador: Entrenador | number; // Foreing key
-}
-
-const ash: Entrenador = {
-    id: 1,
-    nombre: 'Ash',
-};
-const pikachu: Pokemon = {
-    id: 1,
-    nombre: 'Pikachu',
-    entrenador: 1,
-};
-
-const suma = pikachu.entrenador as number + pikachu.id;
-const suma2 = pikachu.entrenador as number as number + pikachu.id;
