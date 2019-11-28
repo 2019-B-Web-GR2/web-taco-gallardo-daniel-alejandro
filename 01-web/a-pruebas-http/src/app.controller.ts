@@ -1,7 +1,3 @@
-<<<<<<< Updated upstream
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
-=======
 import {
     Body,
     Controller,
@@ -14,18 +10,10 @@ import {
 } from '@nestjs/common';
 import {AppService} from './app.service';
 import {get} from 'http';
->>>>>>> Stashed changes
-
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-<<<<<<< Updated upstream
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-=======
     // http://localhost:3000/pepito/hola-mundo
     @Get('hola-mundo')// -> url "/"
     getHello(): string {
@@ -100,7 +88,6 @@ export class AppController {
         return 'Las cabeceras son ${numeroUno}';
     }
 
->>>>>>> Stashed changes
 }
 
 interface ObjetoBienvenida {
