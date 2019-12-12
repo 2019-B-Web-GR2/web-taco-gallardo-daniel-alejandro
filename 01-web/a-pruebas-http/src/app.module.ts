@@ -3,10 +3,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import {TypeOrmCoreModule} from '@nestjs/typeorm/dist/typeorm-core.module';
 import {UsuarioEntity} from './usuario/usuario.entity';
+import {UsuarioModule} from './usuario/usuario.module';
 
 @Module({
-  imports: [TypeOrmCoreModule.forRoot(
-      {type: 'mysql',
+  imports: [UsuarioModule,
+      TypeOrmCoreModule.forRoot(
+      {
+          type: 'mysql',
+          name: 'default',
         host: 'localhost',
         port: 32783,
         username: 'daniel',
