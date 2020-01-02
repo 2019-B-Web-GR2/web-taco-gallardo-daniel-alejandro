@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {UsuarioEntity} from './usuario.entity';
-import {DeleteResult, Repository} from 'typeorm';
+import {DeleteResult, Equal, LessThan, Like, MoreThan, Repository} from 'typeorm';
 
 @Injectable()
 export class UsuarioService {
@@ -25,10 +25,10 @@ export class UsuarioService {
 
     crearUsuario(usuario: UsuarioEntity) {
         // @ts-ignore
-        return this._repositorioUsuario.save<UsuarioEntity>(DeleteResult);
+        return this._repositorioUsuario.save(usuario);
     }
 
-    deleteUsuario(id: number): Promise<UsuarioEntity> {
+    deleteUsuario(id: number): Promise<DeleteResult> {
         // @ts-ignore
         return this._repositorioUsuario.delete(id);
     }
@@ -38,11 +38,47 @@ export class UsuarioService {
         return this._repositorioUsuario.save(usuario);
     }
 
-    buscar(where:any = {},skip:number = 0,take:number = 10) {
-        this._repositorioUsuario.find({
+    buscar(where:any = {},skip:number = 0,take:number = 10, order: any = {id:'DESC', nombre: 'ASC'}): Promise<UsuarioEntity[]> {
+
+        //Exactamente el nombre o Exactamente la cedula
+        const consultaWhere = [
+            {
+                nombre: ''
+            },
+            {
+                cedula: ''
+            }
+        ];
+        //Exactamente el nombre o Exactamente la cedula
+        const consultaWhereLike = [
+            {
+                nombre: Like('%a%a')
+            },
+            {
+                cedula: Like('%a%a')
+            }
+        ];
+        //Exactamente el nombre o Exactamente la cedula
+        const consultaWhereMoreThan = [
+            {
+                id: MoreThan(20)
+            }];
+        //Exactamente el nombre o Exactamente la cedula
+        const consultaWhereLessThan = [
+            {
+                id: LessThan(20)
+            }
+        ];
+        const consultaWhereEqual = [
+            {
+                id: Equal(20)
+            }
+        ];
+        return this._repositorioUsuario.find({
             where: where,
             skip: skip,
-            take: skip,
+            take: take,
+            order: order,
     })
     }
 }
