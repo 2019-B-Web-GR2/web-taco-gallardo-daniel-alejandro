@@ -14,7 +14,7 @@ import {UsuarioService} from './usuario/usuario.service';
                 type: 'mysql',
                 name: 'default',
                 host: 'localhost',
-                port: 32783,
+                port: 32777,
                 username: 'daniel',
                 password: '1234',
                 database: 'web',

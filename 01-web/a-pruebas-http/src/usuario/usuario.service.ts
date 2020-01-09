@@ -38,6 +38,7 @@ export class UsuarioService {
         return this._repositorioUsuario.save(usuario);
     }
 
+
     buscar(where:any = {},skip:number = 0,take:number = 10, order: any = {id:'DESC', nombre: 'ASC'}): Promise<UsuarioEntity[]> {
 
         //Exactamente el nombre o Exactamente la cedula

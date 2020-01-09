@@ -10,26 +10,27 @@ export class UsuarioEntity {
         comment: 'Identificador de la tabla usuario',
     })
     id: number;
-@Index({
-    unique: false,
-})
-@Column({
-    type: 'varchar',
-    nullable: true,
-    name: 'nombre',
-    comment: 'Nombre de la tabla usuario'
-})
-nombre ? : String
+    @Index({
+        unique: false,
+    })
+    @Column({
+        type: 'varchar',
+        nullable: true,
+        name: 'nombre',
+        comment: 'Nombre de la tabla usuario'
+    })
+    nombre ?: String
 
-@Index({
-     unique: false,
-})
-@Column({
-    type: 'varchar',
-    nullable: true,
-    name: 'cedula',
-    comment: 'Cedula de la tabla usuario'
-})
-cedula ? : String
+    @Index({
+        unique: false,
+    })
+    @Column({
+        type: 'varchar',
+        nullable: true,
+        name: 'cedula',
+        comment: 'Cedula de la tabla usuario'
+    })
+        // tslint:disable-next-line:ban-types
+    cedula ?: String
 
 }
