@@ -1,25 +1,29 @@
-import {Module} from '@nestjs/common';
-import {UsuarioController} from './usuario.controller';
-import {UsuarioService} from './usuario.service';
-import {TypeOrmModule} from '@nestjs/typeorm';
-import {UsuarioEntity} from './usuario.entity';
+import {Module} from "@nestjs/common";
+import {UsuarioController} from "./usuario.controller";
+import {UsuarioService} from "./usuario.service";
+import {TypeOrmModule} from "@nestjs/typeorm";
+import {UsuarioEntity} from "./usuario.entity";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([
-            UsuarioEntity, // Entidades a usuarse dentro del modulo
-        ],
-            'default',
-        ),
+        TypeOrmModule
+            .forFeature([
+                    UsuarioEntity // Entidades a usarse dentro
+                                  // del modulo.
+                ],
+                'default' // Nombre de la cadena de conex.
+            ),
     ],
     controllers: [
-        UsuarioController],
+        UsuarioController,
+    ],
     providers: [
         UsuarioService,
     ],
     exports: [
         UsuarioService,
-    ],
+    ]
 })
 export class UsuarioModule {
+
 }

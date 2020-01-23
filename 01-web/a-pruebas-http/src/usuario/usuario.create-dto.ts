@@ -1,6 +1,7 @@
 import {IsNotEmpty, IsNumberString, IsString, Max, MaxLength, Min, MinLength} from "class-validator";
 
-export class UsuarioCreateDto{
+export class UsuarioCreateDto {
+
     @IsNotEmpty()
     @IsString()
     @MinLength(3)

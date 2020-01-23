@@ -1,15 +1,16 @@
-import {Column, Entity, Index, PrimaryGeneratedColumn} from 'typeorm';
+import {Column, Entity, Index, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {MascotasEntity} from "../mascotas/mascotas.entity";
 
-// @ts-ignore
-@Entity()
+@Entity('usuario_web')
 export class UsuarioEntity {
     @PrimaryGeneratedColumn({
         type: 'int',
         unsigned: true,
         name: 'id_web',
-        comment: 'Identificador de la tabla usuario',
+        comment: 'Identificador de la tabla usuario'
     })
     id: number;
+
     @Index({
         unique: false,
     })
@@ -19,18 +20,21 @@ export class UsuarioEntity {
         name: 'nombre',
         comment: 'Nombre de la tabla usuario'
     })
-    nombre ?: String
+    nombre?: string;
 
     @Index({
-        unique: false,
+        unique: true,
     })
     @Column({
         type: 'varchar',
-        nullable: true,
+        nullable: false,
         name: 'cedula',
         comment: 'Cedula de la tabla usuario'
     })
-        // tslint:disable-next-line:ban-types
-    cedula ?: String
-
+    cedula: string;
+    @OneToMany(
+        type => MascotasEntity,
+        mascota => mascota.usuario,
+    )
+    mascotas: MascotasEntity[];
 }

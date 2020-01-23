@@ -1,0 +1,56 @@
+<%- include('../../compartido/cabecera')%>
+<% const estaEditando = datos.usuario != undefined;%>
+<div class="container">
+    <% if(datos.error){ %>
+    <div class="alert alert-danger" role="alert">
+        <%= datos.error %>
+    </div>
+    <%}%>
+    <h1><%= estaEditando ? 'Editando '+ datos.usuario.nombre : 'Crear Usuario'%></h1>
+    <form action="/usuario<%= estaEditando ? '/' + datos.usuario.id : ''%>"
+          method="POST"
+    >
+        <div class="form-group">
+            <label for="NombreID">
+                Nombre
+            </label>
+            <input id="nombreID"
+                   type="text"
+                   name="nombre"
+                   value="<%= estaEditando ? datos.usuario.nombre : ''%>"
+                   placeholder="Ej: Daniel Taco"
+                   title="Ingresar nombre de Usuario"
+                   class="form-control">
+            <small id="nombreIDHelp"
+                class="form-text text-muted">
+                Ingresa un nombre mayor a 3 caracteres y menor a 10.
+            </small>
+        </div>
+        <div class="form-group">
+            <label for="cedulaID">
+                Cedula
+            </label>
+            <input id="cedulaID"
+                   type="text"
+                   name="cedula"
+                   placeholder="Ej: 1723926612"
+                   value = "<%=estaEditando ? datos.usuario.cedula : ''%>"
+                   <% estaEditando? 'disabled': ''%>
+                   title="Ingresar la cedula del usuario de Usuario"
+                   class="form-control">
+            <small id="nombreIDHelp"
+                   class="form-text text-muted">
+                Ingresa una cedula válida.
+            </small>
+        </div>
+        <button type="submit"
+                class="btn btn-success">
+            Crear Usuario
+        </button>
+        <button type="reset"
+                class="btn btn-secondary">
+            Limpiar Formulario
+        </button>
+    </form>
+</div>
+<%- include('../../compartido/pie-de-pagina')%>

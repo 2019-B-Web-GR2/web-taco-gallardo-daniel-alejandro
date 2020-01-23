@@ -1,0 +1,40 @@
+<%- include('../../compartido/cabecera')%>
+<div class="container">
+    <h1>Ruta mostrar usuario</h1>
+    <% if(datos.state){ %>
+        <div class="alert alert-light" role="alert">
+            <%= datos.state %>
+        </div>
+    <%}%>
+    <a href="/usuario/ruta/crear-usuario">
+        <button type="button"
+                class="btn btn-primary">
+            Crear Usuario
+        </button>
+    </a>
+    <hr>
+    <form action="/usuario/ruta/mostrar-usuarios"
+          method="GET"
+    >
+        <div class="form-group">
+            <label for="cedulaID">
+                Buscar Usuario
+            </label>
+            <input id="nombreID"
+                   type="text"
+                   name="consultaUsuario"
+                   placeholder="Ej: Daniel Taco o 1723926612"
+                   title="Ingresar el usuario a buscar"
+                   class="form-control">
+            <small id="nombreIDHelp"
+                   class="form-text text-muted">
+                Puede buscar por cedula o nombre.
+            </small>
+        </div>
+    </form>
+    <%- include('../componentes/mostrar-tabla',
+    {
+    usuarios: datos.usuarios
+    })%>
+</div>
+<%- include('../../compartido/pie-de-pagina')%>

@@ -1,33 +1,40 @@
 import {
-    Body,
+    BadRequestException, Body,
     Controller,
     Get, Headers,
     HttpCode,
-    InternalServerErrorException,
-    Param,
+    InternalServerErrorException, Param,
     Post,
-    Query,
+    Query, Res,
 } from '@nestjs/common';
 import {AppService} from './app.service';
-import {get} from 'http';
-@Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
 
-    // http://localhost:3000/pepito/hola-mundo
-    @Get('hola-mundo')// -> url "/"
+@Controller('pepito') // segmento url -> "/"
+export class AppController {
+    constructor(private readonly appService: AppService) {
+    } // http://localhost:4000/pepito/ GET
+    @Get() // -> url "hola-mundo"
     getHello(): string {
-        return 'Hola mundo';
+        return this.appService.getHello();
+    }
+    @Get('login')
+    login(
+        @Res() res,
+    ) {
+        res.render('login/login');
     }
 
+    // http://localhost:4000/pepito/ POST
     @HttpCode(200)
-    @Post('EsPar')
+    @Post('esPar')
     adiosMundo(): string {
         const segundos = this.obtenerSegundos();
         if (segundos % 2 === 0) {
-            return 'Adios Mundo!';
+            return 'Adios mundo!';
         } else {
-            throw new InternalServerErrorException('Es impar');
+            throw new InternalServerErrorException(
+                'Es  impar',
+            );
         }
 
     }
@@ -35,128 +42,200 @@ export class AppController {
     private obtenerSegundos(): number {
         return new Date().getSeconds();
     }
+
     @Get('bienvenida')
     public bienvenida(
         @Query() parametrosDeConsulta: ObjetoBienvenida,
         @Query('nombre') nombreUsuario: string,
-        @Query('numero') numeroUsuario: number,
-        @Query('casado') casadoUsuario: boolean,
+        @Query('numero') numeroUsuario: string,
+        @Query('casado') casadoUsuario: string,
     ): string {
-        // tslint:disable-next-line:no-console
         console.log(parametrosDeConsulta);
-        // tslint:disable-next-line:no-console
-        console.log(typeof nombreUsuario);
-        // tslint:disable-next-line:no-console
         console.log(typeof numeroUsuario);
-        // tslint:disable-next-line:no-console
-        console.log(typeof casadoUsuario);
-        // template strings \\ 'Mensaje ${variable}'
-        return 'Mensaje ${parametrosDeConsulta.nombre} Numero: ${parametrosDeConsulta.numero}';
+        // template strings \\ `Mensaje ${variable}`
+        return `Mensaje ${parametrosDeConsulta.nombre} Numero: ${parametrosDeConsulta.numero}`;
     }
 
-    @Get('inscripcion-curso/:idCurso/:cedula') // /:nombreParametro
+    @Get('inscripcion-curso/:idCurso/:cedula') //  "/:nombreParametro"
     public inscripcionCurso(
         @Param() parametrosDeRuta: ObjetoInscripcion,
         @Param('idCurso') idCurso: string,
-        // tslint:disable-next-line:no-shadowed-variable
         @Param('cedula') cedula: string,
     ): string {
-        // tslint:disable-next-line:no-console
         console.log(parametrosDeRuta);
-        // template strings \\ 'Mensaje ${variable}'
-        return 'Te inscribiste al curso: ${parametrosDeRuta.idCurso}' +
-            '${parametrosDeRuta.cedula}';
+        return `Te inscribiste al curso: ${idCurso}\n ${cedula}`;
     }
+
     @Post('almorzar')
     @HttpCode(200)
     public almorzar(
         @Body() parametrosDeCuerpo,
-        @Body('id') id: number,
+        @Body('id') id: number, // Objeto :D Arreglo D:
     ): string {
-        // tslint:disable-next-line:no-console
         console.log(parametrosDeCuerpo);
-        // template strings \\ 'Mensaje ${variable}'
-        return 'El id es: ${id}';
+        return `Te inscribiste al curso: ${parametrosDeCuerpo}`;
     }
+
     @Get('obtener-cabeceras')
     obtenerCabeceras(
         @Headers() cabeceras,
         @Headers('numerouno') numeroUno: string,
     ) {
-        // tslint:disable-next-line:no-console
         console.log(cabeceras);
-        return 'Las cabeceras son ${numeroUno}';
+        return `Las cabeceras son: ${numeroUno}`;
     }
+}
 
+interface ObjetoInscripcion {
+    idCurso: string;
+    cedula: string;
 }
 
 interface ObjetoBienvenida {
-    idCurso?: string;
-    cedula: string;
-}
-interface ObjetoInscripcion {
     nombre?: string;
     numero?: string;
     casado?: string;
 }
+
+/*
 // Typescript
-// Declaracion de variables
-// No utilizar
-// var nombre:string = "Daniel";
-let apellido: string = 'Taco'; // Mutable
-const cedula: string = '1718...'; // Inmutable
-apellido = 'Gallardo'; // RE ASIGNADO
-// cedula = "18"; // INMUTABLE
+// var nombre:string = "Adrian";
+let apellido: string = "Eguez"; // Mutable
+const cedula: string = "1718..."; // Inmutable OK
+apellido = "Sarzosa"; // RE ASIGNANDO "=" Mutable
+// cedula = "18"; // :( INMUTABLE - NO RE ASIGNAR
 const casado: boolean = false; // boolean
 const edad: number = 30; // number
 const sueldo: number = 12.12; // number
-let hijos = 0;
-hijos = null; // null
-// tslint:disable-next-line:prefer-const
+let hijos = 0; // null
+hijos = null;
 let ojos; // undefined
 
 // TRUTY - FALSY
-// con tres iguales compara hasta el tipo de dato
-if (true) {
-  // tslint:disable-next-line:no-console
-  console.log('Truty');
-} else {
-  // tslint:disable-next-line:no-console
-  console.log('Falsy');
-}
 if (0) {
-  // tslint:disable-next-line:no-console
-  console.log('Falsy');
+    console.log('Truty');
+} else {
+    console.log('Falsy'); // FALSY
 }
 if (-1) {
-  // tslint:disable-next-line:no-console
-  console.log('Truty');
+    console.log('Truty'); // Truty
+} else {
+    console.log('Falsy');
 }
-if (-1) {
-  // tslint:disable-next-line:no-console
-  console.log('Truty');
+if (1) {
+    console.log('Truty'); // Truty
+} else {
+    console.log('Falsy');
+}
+if ("") {
+    console.log('Truty');
+} else {
+    console.log('Falsy'); // Falsy
+}
+if ("abc") {
+    console.log('Truty'); // Truty
+} else {
+    console.log('Falsy');
 }
 
-if ('') {
-  // tslint:disable-next-line:no-console
-  console.log('Truty');
+if ([]) {
+    console.log('Truty'); // truty
+} else {
+    console.log('Falsy');
 }
 
-if ('abc') {
-  // tslint:disable-next-line:no-console
-  console.log('Truty');
+if ({}) {
+    console.log('Truty'); // truty
+} else {
+    console.log('Falsy');
 }
 
-// tslint:disable-next-line:max-classes-per-file
-class Usuario {
-  public cedula: string = '1723926612';
-  cedula2 = '0501651418';
-  private holaMundo(): void {
-    // tslint:disable-next-line:no-console
-    console.log('Hola');
-  }
-  holaMundo2() {
-    // tslint:disable-next-line:no-console
-    console.log('Hola');
-  }
+// class Usuario {
+//     public cedula: string = "1871233";
+//     cedula2 = "1871233"; // public : string
+//     constructor(
+//         public nombre:string, // Crear una Propiedad
+//                              // Llamada nombre y
+//                              // Recibir un parametro
+//                              // Y asignarlo a la propiedad
+//                              // nombre
+//         public apellido:string
+//     ){
+//
+//     }
+//
+//
+//     private holaMundo(): void {
+//         console.log("Hola")
+//     }
+//
+//     holaMundo2() {
+//         console.log("Hola")
+//     }
+// }
+// const adrian = new Usuario("Nombre");
+
+class Usuario2 {
+    constructor(
+        public nombre: string, // parametro requerido
+        public apellido?: string, // parametro opcional
+    ) {
+    }
 }
+
+const adrian = new Usuario2("Adrian");
+const vicente = new Usuario2("Vicente", "Eguez");
+
+class Empleado extends Usuario2 {
+    constructor(
+        nombre: string,
+        public numeroContrato: string,
+        apellido?: string,
+    ) {
+        super(nombre, apellido);
+    }
+}
+
+const empleadoAdrian = new Empleado("Adrian",
+    "1234");
+
+interface Pelota {
+    diametro: number;
+    color?: string;
+}
+
+const balonFutbol: Pelota = {
+    diametro: 1,
+    color: "amazul",
+    // peso: 12,
+};
+
+class Juego implements Pelota {
+    diametro: number;
+}
+
+interface Entrenador {
+    id: number;
+    nombre: string;
+}
+
+interface Pokemon {
+    id: number;
+    nombre: string;
+    entrenador: Entrenador | number; // Foreign Key
+}
+
+const ash: Entrenador = {
+    id: 1,
+    nombre: 'Ash',
+};
+const pikachu: Pokemon = {
+    id: 1,
+    nombre: 'Pikachu',
+    entrenador: 1
+};
+
+const suma = pikachu.entrenador as number + pikachu.id;
+const suma2 = <number>pikachu.entrenador + pikachu.id;
+
+*/
