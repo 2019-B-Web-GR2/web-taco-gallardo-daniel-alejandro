@@ -1,3 +1,5 @@
+// @ts-ignore
+// @ts-ignore
 import {
     BadRequestException,
     Body,
@@ -31,37 +33,38 @@ export class UsuarioController {
 
     @Get('ruta/mostrar-usuarios')
     async rutaMostrarUsuarios(
-        @Res() res,
-        @Query('state') state: string,
+        @Query('mensaje') mensaje: string,
         @Query('error') error: string,
         @Query('consultaUsuario') consultaUsuario: string,
+        @Res() res,
     ) {
         let consultaServicio;
-        if(consultaServicio){
+        if (consultaUsuario) {
             consultaServicio = [
                 {
-                    nombre: Like('%' + consultaUsuario + '%')
-                } ,
+                    nombre: Like('%' + consultaUsuario + '%'),
+                },
                 {
-                    cedula: Like('%' + consultaUsuario + '%')
-                }
+                    cedula: Like('%' + consultaUsuario + '%'),
+                },
             ];
         }
-        const usuarios = await this._usuarioService.buscar();
+        const usuarios = await this._usuarioService.buscar(consultaServicio);
         res.render(
             'usuario/rutas/buscar-mostrar-usuario',
             {
                 datos: {
-                    state: state,
-                    error: error,
+                    // usuarios:usuarios -> nueva sintaxis,
+                    mensaje,
                     usuarios,
-                }
-                ,
+                    error,
+                },
             },
         );
     }
+
     @Get('ruta/crear-usuario')
-    async rutaCrearUsuarios(
+    rutaCrearUsuario(
         @Query('error') error: string,
         @Res() res,
     ) {
@@ -69,9 +72,8 @@ export class UsuarioController {
             'usuario/rutas/crear-usuario',
             {
                 datos: {
-                    error: error
-                }
-                ,
+                    error,
+                },
             },
         );
     }
@@ -87,25 +89,25 @@ export class UsuarioController {
         };
         try {
             const arregloUsuarios = await this._usuarioService.buscar(consulta);
-            if(arregloUsuarios.length > 0) {
+            if (arregloUsuarios.length > 0) {
                 res.render(
                     'usuario/rutas/crear-usuario',
                     {
-                        datos: { error, usuario: arregloUsuarios[0] },
+                        datos: {error, usuario: arregloUsuarios[0]},
                     },
                 );
-            } else
-            {
-                res.status(400);
-                res.send('Error encontrando usuario')
+            } else {
+                res.redirect(
+                    '/usuario/ruta/mostrar-usuarios?error=No existe ese usuario',
+                );
             }
-
         } catch (error) {
             console.log(error);
             res.redirect(
-                '/usuario/ruta/mostrar-usuarios?error=No existe ese usuario',
+                '/usuario/ruta/buscar-mostrar-usuarios?error=Error editando usuario',
             );
         }
+
     }
 
     @Get('ejemploejs')
@@ -213,33 +215,29 @@ export class UsuarioController {
     async crearUnUsuario(
         @Body() usuario: UsuarioEntity,
         @Res() res,
-
     ): Promise<void> {
         const usuarioCreateDTO = new UsuarioCreateDto();
         usuarioCreateDTO.nombre = usuario.nombre;
         usuarioCreateDTO.cedula = usuario.cedula;
         const errores = await validate(usuarioCreateDTO);
         if (errores.length > 0) {
-            res.render('usuario/rutas/crear-usuario',
-            {
-                datos: {
-                    error: 'Ingrese los datos correctamente',
-                },
-            },
+            res.redirect(
+                '/usuario/ruta/crear-usuario?error=Error validando',
             );
+            // throw new BadRequestException('Error validando');
         } else {
-            try{
+            try {
                 await this._usuarioService
                     .crearUno(
                         usuario,
                     );
                 res.redirect(
-                    'usuario/ruta/mostrar-usuarios?state=Usuario Creado Correctamente',
+                    '/usuario/ruta/mostrar-usuarios?mensaje=El usuario se creo correctamente',
                 );
-            }
-            catch{
+            } catch (error) {
+                console.error(error);
                 res.redirect(
-                    'usuario/ruta/crear-usuarios?error=Error del Servidor',
+                    '/usuario/ruta/crear-usuario?error=Error del servidor',
                 );
             }
 
@@ -247,7 +245,7 @@ export class UsuarioController {
 
     }
 
-    @Put(':id')
+    @Post(':id')
     async actualizarUnUsuario(
         @Body() usuario: UsuarioEntity,
         @Param('id') id: string,
@@ -260,8 +258,7 @@ export class UsuarioController {
         const errores = await validate(usuarioUpdateDTO);
         if (errores.length > 0) {
             res.redirect(
-                '/usuario/ruta/editar-usuario/' + id + '?error=Usuario no validado'
-
+                '/usuario/ruta/editar-usuario/' + id + '?error=Usuario no validado',
             );
         } else {
             await this._usuarioService
@@ -269,10 +266,9 @@ export class UsuarioController {
                     +id,
                     usuario,
                 );
-            res.render(
-                '/usuario/ruta/mostrar-usuarios?state=El usuario ' + usuario.nombre + ' actualizado'
-
-            )
+            res.redirect(
+                '/usuario/ruta/mostrar-usuarios?mensaje=El usuario ' + usuario.nombre + ' actualizado',
+            );
         }
 
     }
@@ -290,19 +286,17 @@ export class UsuarioController {
     @Post(':id')
     async eliminarUnoPost(
         @Param('id') id: string,
-        @Res() res
+        @Res() res,
     ): Promise<void> {
-        try{
+        try {
             await this._usuarioService
                 .borrarUno(
                     +id,
                 );
-            res.redirect(`/usuario/ruta/mostrar-usuarios?state=Usuario ID: ${id} eliminado`);
-        }
-        catch(error){
-            res.redirect()
+            res.redirect(`/usuario/ruta/mostrar-usuarios?mensaje=Usuario ID: ${id} eliminado`);
+        } catch (error) {
+            console.error(error);
             res.redirect('/usuario/ruta/mostrar-usuarios?error=Error del servidor');
-
         }
     }
 

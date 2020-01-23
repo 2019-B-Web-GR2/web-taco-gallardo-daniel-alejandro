@@ -13,15 +13,17 @@ import {AppService} from './app.service';
 export class AppController {
     constructor(private readonly appService: AppService) {
     } // http://localhost:4000/pepito/ GET
-    @Get() // -> url "hola-mundo"
-    getHello(): string {
-        return this.appService.getHello();
-    }
+
     @Get('login')
     login(
         @Res() res,
     ) {
         res.render('login/login');
+    }
+
+    @Get() // -> url "hola-mundo"
+    getHello(): string {
+        return this.appService.getHello();
     }
 
     // http://localhost:4000/pepito/ POST
