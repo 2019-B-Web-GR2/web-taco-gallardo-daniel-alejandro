@@ -16,11 +16,11 @@ import {MascotasEntity} from "./mascotas/mascotas.entity";
             {
                 name: 'default', // Nombre cadena de Conex.
                 type: 'mysql',
-                host: '172.31.108.148',
-                port: 32769,
-                username: 'LazaMH',
+                host: 'localhost',
+                port: 32771,
+                username: 'daniel',
                 password: '1234',
-                database: 'Prueba',
+                database: 'web',
                 dropSchema: true,
                 entities: [
                     UsuarioEntity,

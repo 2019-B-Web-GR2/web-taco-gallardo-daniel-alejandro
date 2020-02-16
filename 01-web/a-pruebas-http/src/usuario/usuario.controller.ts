@@ -222,7 +222,6 @@ export class UsuarioController {
             res.redirect(
                 '/usuario/ruta/crear-usuario?error=Error validando',
             );
-            // throw new BadRequestException('Error validando');
         } else {
             try {
                 await this._usuarioService
