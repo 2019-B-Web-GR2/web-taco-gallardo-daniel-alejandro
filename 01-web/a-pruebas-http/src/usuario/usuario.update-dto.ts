@@ -6,8 +6,10 @@ export class UsuarioUpdateDto {
     @MinLength(3)
     @MaxLength(80)
     nombre: string;
+
     @IsEmpty()
     cedula: string;
+
     @IsNotEmpty()
     @IsNumber()
     @Min(0)
