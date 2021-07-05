@@ -1,23 +1,55 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import {TypeOrmCoreModule} from '@nestjs/typeorm/dist/typeorm-core.module';
+import {Module} from '@nestjs/common';
+import {AppController} from './app.controller';
+import {AppService} from './app.service';
+import {TypeOrmModule} from '@nestjs/typeorm';
 import {UsuarioEntity} from './usuario/usuario.entity';
+import {UsuarioModule} from './usuario/usuario.module';
+import {UsuarioService} from './usuario/usuario.service';
+import {MascotasModule} from "./mascotas/mascotas.module";
+import {MascotasEntity} from "./mascotas/mascotas.entity";
 
 @Module({
-  imports: [TypeOrmCoreModule.forRoot(
-      {type: 'mysql',
-        host: 'localhost',
-        port: 32783,
-        username: 'daniel',
-        password: '1234',
-        database: 'web',
-        entities: [
-            UsuarioEntity,
-        ],
-        synchronize: true},
-  )],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [
+        UsuarioModule,
+        MascotasModule,
+        TypeOrmModule.forRoot(
+            {
+                name: 'default', // Nombre cadena de Conex.
+                type: 'mysql',
+                host: 'localhost',
+                port: 32771,
+                username: 'daniel',
+                password: '1234',
+                database: 'web',
+                dropSchema: true,
+                entities: [
+                    UsuarioEntity,
+                    MascotasEntity,
+                ],
+                synchronize: true, // Crear -> true , Conectar -> false
+            },
+        ),
+    ],
+    controllers: [AppController],
+    providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+    constructor(
+        private _usuarioService: UsuarioService,
+    ) {
+
+    }
+}
+//
+//
+const criterioBusqueda = {
+    "where":{
+        "moduloCurso":{}
+    }
+};
+//
+
+
+
+
+
